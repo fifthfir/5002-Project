@@ -1,2 +1,0 @@
-cd X:\源代码
-pyinstaller -F -w -i X:\源代码\icon.ico X:\源代码\MyPWD.py
