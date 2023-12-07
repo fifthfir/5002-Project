@@ -25,5 +25,3 @@ def aes_decrypt(iv_and_ct):
     cipher = AES.new(aes_key, AES.MODE_CBC, iv)
     pt = unpad(cipher.decrypt(ct), AES.block_size)
     return pt.decode()
-
-
