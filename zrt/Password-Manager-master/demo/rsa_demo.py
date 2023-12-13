@@ -54,7 +54,7 @@ def main():
 
         decrypted = pow(encrypted, b, n)
         print(f"Decrypted Message: {decrypted}")
-        print(f"Decrypted Message: {decrypted} + {n} * Z")
+        print(f"(Decrypted Message: {decrypted} + {n} * Z)")
 
 
 main()
