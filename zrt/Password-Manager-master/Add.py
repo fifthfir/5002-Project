@@ -1,3 +1,6 @@
+import json
+import encode
+
 try:
     from tkinter import *
     from tkinter import ttk
@@ -5,55 +8,46 @@ except ImportError:
     from Tkinter import *
     import ttk
 
-import json
-import encode
-
 LABEL_FONT = ("Monospace", 12)
 BUTTON_FONT = ("Sans-Serif", 10, "bold")
 INFO_FONT = ("Verdana", 12)
 
 
 class AddWindow(Toplevel):
-
-    """docstring for Login"""
-
-    def __init__(self, *args):
+    ''' Add Window'''
+    def __init__(self, *args):  # A tuple of many arguments
         Toplevel.__init__(self, *args)
 
-        self.title("Add Credentials")
+        # Add Credentials
+        self.title("Add")
         self.setFrames()
 
     def setFrames(self, **kwargs):
+        # a Frame called 'add'
         add = Frame(self, padx=2, pady=2, bd=3)
         add.pack()
 
+        # Three labels
+        # Service
         Label(add, text="Service *", width=30, bd=3, font=LABEL_FONT).pack()
         service = ttk.Entry(add)
-        service.pack()
+        service.pack()  # Put the Entry into the add frame
 
+        # Username
         Label(add, text="Username", width=30, bd=3, font=LABEL_FONT).pack()
         username = ttk.Entry(add)
         username.pack()
 
+        # Password
         Label(add, text="Password *", width=30, bd=3, font=LABEL_FONT).pack()
         password = ttk.Entry(add, show="*")
         password.pack()
 
-        # Adding special bind tag for bind event
-        tag = "Submit"
-        for elm in (username, password, service):
-            elm.bindtags((tag,) + elm.bindtags())
+        # Style of submit button, font and align
+        sty = ttk.Style()
+        sty.configure("Submit.TButton", font=BUTTON_FONT, sticky="s")
 
-        # Checkout
-        # http://stackoverflow.com/questions/11456631/how-to-capture-events-on-tkinter-child-widgets
-        self.bind_class(tag, '<Return>', lambda _: self.addClicked(
-            info=info, username=username, password=password,
-            service=service))
-
-        s = ttk.Style()
-        s.configure("Submit.TButton", font=BUTTON_FONT, sticky="s")
-
-        # label for spacing
+        # label for spacing extra information in red
         info = Label(add, width=30, bd=3, fg="red", font=INFO_FONT)
         info.pack()
 
@@ -64,26 +58,27 @@ class AddWindow(Toplevel):
 
         addBtn.pack()
 
-    def addClicked(self, **kwargs):
-
+    def addClicked(self, **kwargs):  # A dict of many arguments
         fileName = ".data"
-        # Writing encoding data to file
-        if(kwargs['password'].get() != "" and kwargs['service'].get() != ""):
-            data = None
+        data = {}
+        # Writing data to a secrete file
+
+        if (kwargs['password'].get() != "" and kwargs['service'].get() != ""):
             details = [kwargs['username'].get(),
+                    #  encode.encode(kwargs['password'].get()).decode('utf-8')]
                        encode.encode(kwargs['password'].get())]
 
-            # Reading initally present data
+            # read present data
             try:
                 with open(fileName, "r") as outfile:
-                    data = outfile.read()
+                    data = outfile.read()  # in json format
             except IOError:
-                # Create a file if it doesn't exits
+                # Create file if doesn't exits
                 open(fileName, "a").close()
 
-            # Loading new data
+            # load new data
             if data:
-                data = json.loads(data)
+                data = json.loads(data)  # from json into dictionary
                 data[kwargs['service'].get()] = details
             else:
                 data = {}
@@ -92,24 +87,14 @@ class AddWindow(Toplevel):
             # Writing back the data
             with open(".data", "w") as outfile:
                 outfile.write(json.dumps(data, sort_keys=True, indent=4))
+                # from dictionary to json, to write into the file
 
-            # To delete contents of the Entry
-            for widg in ('username', 'service', 'password'):
-                kwargs[widg].delete(0, 'end')
+            # To delete contents of the input Entry
+            for input_frame in ('username', 'service', 'password'):
+                kwargs[input_frame].delete(0, 'end')
 
-            kwargs['info'].config(text="Added!!")
+            kwargs['info'].config(text="*Added Successfully*")
 
-        # end of if
+        # No input
         else:
-
-            kwargs['info'].config(text="Service or Password can't be empty!!")
-
-
-# used for debugging
-if __name__ == '__main__':
-    root = Tk()
-    Tk.iconbitmap(root, default='icon.ico')
-    Tk.wm_title(root, "Test")
-    Label(root, text="Root window").pack()
-    new = AddWindow()
-    root.mainloop()
+            kwargs['info'].config(text="*Please enter Service and Password*")

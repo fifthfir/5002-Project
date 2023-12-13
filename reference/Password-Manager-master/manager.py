@@ -64,17 +64,10 @@ class Login(Tk):
         submitBtn.grid(row=2, column=1, pady=3)
 
     """Kwargs = loginLabel, password entry, and submit button"""
-
     def checkPwd(self, frame, **kwargs):
         chk = kwargs['entry'].get()
         # if passwords match
-
-        # if hashlib.md5(chk.encode("utf8")).hexdigest() == encode.password:
-
-        with open(".pwd", "r") as file:
-            stored_encrypted_password = file.read()
-        decrypted_password = encode.decode(stored_encrypted_password)
-        if chk == decrypted_password:
+        if hashlib.md5(chk).hexdigest() == encode.password:
 
             self.state['text'] = "Logged In"
             self.state['val'] = True
@@ -104,7 +97,7 @@ class Login(Tk):
         img = []  # image array
         self.temp = []  # temp array
 
-        for i in range(3):
+        for i in xrange(3):
             f.append(Frame(login, padx=2, width=50, height=50))
             f[i].grid(row=3, column=i)
             img.append(PhotoImage(
@@ -143,8 +136,7 @@ class Login(Tk):
     def register(self, frame, *pwd):
         # pwd is a list containing password inputs
         if pwd[0].get() == pwd[1].get():
-            # encode.password = hashlib.md5(pwd[0].get().encode()).hexdigest()
-            encode.password = encode.encode(pwd[0].get())
+            encode.password = hashlib.md5(pwd[0].get()).hexdigest()
             # Saving password for future use.
             open(".pwd", "w").write(encode.password)
 
